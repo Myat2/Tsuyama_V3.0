@@ -21,9 +21,11 @@ public class TeleCmd extends CommandBase
 
     double Dpad = -1.0;
 
-    Double joyXpos = 0.82;
-    Double joyYpos = 0.89; //to have an intermediate variable for joystick control
+    Double joyXpos = 0.3;
+    Double joyYpos = 0.3; //to have an intermediate variable for joystick control
     Translation2d pos;
+
+    //y is 0.89, x is 0.82
 
     /**
      * Constructor
@@ -43,6 +45,7 @@ public class TeleCmd extends CommandBase
     @Override
     public void initialize()
     {
+        Dpad = -1.0;
     }
 
     /**
@@ -119,21 +122,28 @@ public class TeleCmd extends CommandBase
         else if (LeftTrig > 0.1){
             joyYpos = joyYpos - 0.005;
         }
-        else if (Dpad == 0) {
+        else if (Dpad == 0.0) {
             joyXpos = joyXpos + 0.005;
         }
-        else if (Dpad == 180) {
+        else if (Dpad == 180.0) {
             joyXpos = joyXpos - 0.005;
         }
+
+        //the whole above section coding is wrong, the y axis should change if the x axis moves
+        //also code a hard limit using pythagoras theorm on how physically possible it is to move the arm
 
         pos = new Translation2d(joyXpos,joyYpos);
         System.out.println("Dpad" + Dpad);
         System.out.println("JoyXpos:" + joyXpos);
         System.out.println("JoyYpos:" + joyYpos);
-        new MoveArm(pos, 12.0).schedule();
+
+        //use tail -f /var/local/kauailabs/log/FRC_UserProgram.log 
+        //command in vnc CMD to view the printouts
+        // new MoveArm(pos, 12.0).schedule();
+        m_arm.setArmPos(pos);
 
         // Unrelated to arm control, leave it as is
-        m_arm.setCameraAngle(m_arm.getSliderCamera());
+        // m_arm.setCameraAngle(m_arm.getSliderCamera());
         m_arm.setGripper(m_arm.getSliderGripper());
     }
 
