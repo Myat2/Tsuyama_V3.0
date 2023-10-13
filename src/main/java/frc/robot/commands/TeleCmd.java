@@ -21,8 +21,8 @@ public class TeleCmd extends CommandBase
 
     double Dpad = -1.0;
 
-    Double joyXpos = 0.3;
-    Double joyYpos = 0.3; //to have an intermediate variable for joystick control
+    Double joyXpos = 0.82;
+    Double joyYpos = 0.84; //to have an intermediate variable for joystick control
     Translation2d pos;
 
     //y is 0.89, x is 0.82
@@ -102,8 +102,8 @@ public class TeleCmd extends CommandBase
         }
         else if (btnA){
 
-            joyXpos = 0.82;
-            joyYpos = 0.89;
+            joyXpos = 0.41;
+            joyYpos = 0.20;
 
             // joyXpos = 0.20;
             // joyYpos = 0.20;
@@ -139,7 +139,7 @@ public class TeleCmd extends CommandBase
 
         //use tail -f /var/local/kauailabs/log/FRC_UserProgram.log 
         //command in vnc CMD to view the printouts
-        // new MoveArm(pos, 12.0).schedule();
+        //new MoveArm(pos, 12.0).schedule();
         m_arm.setArmPos(pos);
 
         // Unrelated to arm control, leave it as is

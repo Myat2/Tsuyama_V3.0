@@ -22,8 +22,8 @@ public class Arm extends SubsystemBase {
     private Translation2d m_pos; // current arm tip target position
     private Translation2d m_posreal;// actual current arm tip position
 
-    private final double a1 = 0.3 ;  //lower arm (y)
-    private final double a2 = 0.3;  //upper arm (x)
+    private final double a1 = 0.84 ;  //lower arm (y)
+    private final double a2 = 0.82;  //upper arm (x)
 
     //y is 0.89, x is 0.82
 
@@ -56,8 +56,8 @@ public class Arm extends SubsystemBase {
     private final NetworkTableEntry D_posXreal = tab.add("real posX", 0).withPosition(0,1).getEntry();
     private final NetworkTableEntry D_posYreal = tab.add("real posY", 0).withPosition(1,1).getEntry();
 
-    private final NetworkTableEntry D_debug1 = tab.add("A wrt horizon", 0).withPosition(2,1).getEntry();
-    private final NetworkTableEntry D_debug2 = tab.add("B wrt horizon", 0).withPosition(3,1).getEntry();
+    private final NetworkTableEntry D_angleA = tab.add("A wrt horizon", 0).withPosition(2,1).getEntry();
+    private final NetworkTableEntry D_angleB = tab.add("B wrt horizon", 0).withPosition(3,1).getEntry();
 
     private final NetworkTableEntry D_sliderX = tab.add("setX", 0.16).withPosition(5,0).withWidget(BuiltInWidgets.kNumberSlider)
             .withProperties(Map.of("min", 0.05, "max", 2.0)).getEntry();
@@ -261,8 +261,6 @@ public class Arm extends SubsystemBase {
         D_posXreal.setDouble(m_x);
         D_posYreal.setDouble(m_y);
 
-
-
         double a = a2;
         double c = a1;
         double b = Math.sqrt(x * x + y * y);
@@ -282,11 +280,11 @@ public class Arm extends SubsystemBase {
         // shoulderServo and elbowServo might be mounted clockwise or anti clockwise.
         // offset0 and offset1 are used to adjust the zero the arm position.
         // This makes it easier to mount and tune the arm.
-        A = Math.toDegrees(A) * shoulderRatio; // * (150.0/135);
+        A = Math.toDegrees(A) * shoulderRatio * (180.0/150);
         B = Math.toDegrees(B) * elbowRatio;
         
-        D_debug1.setDouble(A/shoulderRatio);
-        D_debug2.setDouble(B/elbowRatio);
+        D_angleA.setDouble(A/shoulderRatio);
+        D_angleB.setDouble(B/elbowRatio);
 
         System.out.println("A wrt horizon:" + A/shoulderRatio);
         System.out.println("B wrt horizon:" + B/elbowRatio);
@@ -295,7 +293,7 @@ public class Arm extends SubsystemBase {
         A = 300 - A;
 
         //Servo B is flipped?
-        // B = 300 - B;
+        B = 300 - B;
 
         shoulderServo.setAngle(A + offset0); // shoulderServo is -15 * shoulderRatio
         elbowServo.setAngle(B + offset1); // elbowServo is -15 degrees * elbowARatio
