@@ -2,6 +2,7 @@ package frc.robot.commands;
 
 import edu.wpi.first.wpilibj.geometry.Translation2d;
 import edu.wpi.first.wpilibj2.command.CommandBase;
+import edu.wpi.first.wpilibj2.command.WaitCommand;
 import frc.robot.Globals;
 import frc.robot.RobotContainer;
 import frc.robot.commands.gamepad.OI;
@@ -21,11 +22,17 @@ public class TeleCmd extends CommandBase
 
     double Dpad = -1.0;
 
-    Double joyXpos = 0.82;
-    Double joyYpos = 0.84; //to have an intermediate variable for joystick control
+    Double joyXpos = 0.90;
+    Double joyYpos = 0.70; //to have an intermediate variable for joystick control
+   
+    // Double joyXpos = 0.30;
+    // Double joyYpos = 0.30;  
+    
     Translation2d pos;
 
-    //y is 0.89, x is 0.82
+    //for model, y is 0.30, x is 0.35
+
+    //y is 0.61, x is 0.90
 
     /**
      * Constructor
@@ -59,6 +66,9 @@ public class TeleCmd extends CommandBase
          */
         // Right stick for X-Y control
         // Left stick for W (rotational) control
+
+        boolean btnflag = false;
+        boolean joystickflag = false;
      
 
         double x = m_oi.getRightDriveX();
@@ -85,48 +95,54 @@ public class TeleCmd extends CommandBase
         // uncomment and change it to the preset coordinates
         if (btnY) {
 
-            joyXpos = 0.82;
-            joyYpos = 0.89;
+            joyXpos = 0.485;
+            joyYpos = 0.60;
 
-            // joyXpos = 0.35;
-            // joyYpos = 0.30;
+            btnflag = true;
         }
         else if (btnX){
 
-            joyXpos = 0.82;
-            joyYpos = 0.89;
+            joyXpos = 0.775;
+            joyYpos = 1.02;
 
+            btnflag = true;
 
-            // joyXpos = 0.25;
-            // joyYpos = 0.25;
         }
         else if (btnA){
 
-            joyXpos = 0.41;
-            joyYpos = 0.20;
+            joyXpos = 1.33;
+            joyYpos = 0.70;
 
-            // joyXpos = 0.20;
-            // joyYpos = 0.20;
+            btnflag = true;
         }
         else if (btnB){
 
-            joyXpos = 0.82;
-            joyYpos = 0.89;
+            // joyXpos = 0.82;
+            // joyYpos = 0.89;
 
-            // joyXpos = 0.30;
-            // joyYpos = 0.30;
+            btnflag = true;
         }
         else if (RightTrig > 0.1){
             joyYpos = joyYpos + 0.005;
+
+            joystickflag = true;
         }
         else if (LeftTrig > 0.1){
             joyYpos = joyYpos - 0.005;
+
+            joystickflag = true;
         }
         else if (Dpad == 0.0) {
-            joyXpos = joyXpos + 0.005;
+            // joyXpos = joyXpos + 0.005;
+            joyXpos = joyXpos - 0.005;
+
+            joystickflag = true;
         }
         else if (Dpad == 180.0) {
-            joyXpos = joyXpos - 0.005;
+            // joyXpos = joyXpos - 0.005;
+            joyXpos = joyXpos + 0.005;
+
+            joystickflag = true;
         }
 
         //the whole above section coding is wrong, the y axis should change if the x axis moves
@@ -140,11 +156,22 @@ public class TeleCmd extends CommandBase
         //use tail -f /var/local/kauailabs/log/FRC_UserProgram.log 
         //command in vnc CMD to view the printouts
         //new MoveArm(pos, 12.0).schedule();
-        m_arm.setArmPos(pos);
+
+        if (joystickflag == true){
+            m_arm.setArmPos(pos);   
+        }
+        else if(btnflag == true)
+        {
+            new MoveArm(pos,1.0).schedule();
+            new WaitCommand(2.0);
+        }
+
 
         // Unrelated to arm control, leave it as is
         // m_arm.setCameraAngle(m_arm.getSliderCamera());
         m_arm.setGripper(m_arm.getSliderGripper());
+
+
     }
 
     /**

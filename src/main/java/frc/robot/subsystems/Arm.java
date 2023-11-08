@@ -11,21 +11,28 @@ import edu.wpi.first.wpilibj.geometry.Translation2d;
 import edu.wpi.first.wpilibj.shuffleboard.BuiltInWidgets;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
+import frc.robot.subsystems.ServoSpecial;
 
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
 //testing commit
 
 public class Arm extends SubsystemBase {
-    private final Servo shoulderServo, elbowServo, gripperServo, cameraServo, trolleyServo;
+    private final Servo gripperServo, cameraServo, trolleyServo;
+    private final ServoSpecial shoulderServo, elbowServo;
 
     private Translation2d m_pos; // current arm tip target position
     private Translation2d m_posreal;// actual current arm tip position
 
-    private final double a1 = 0.84 ;  //lower arm (y)
-    private final double a2 = 0.82;  //upper arm (x)
+    private final double a2 = 0.90;  //upper arm (x)
+    private final double a1 = 0.70 ;  //lower arm (y)
+    
 
-    //y is 0.89, x is 0.82
+    // private final double a1 = 0.30 ;  //lower arm (y)
+    // private final double a2 = 0.30;  //upper arm (x)
+
+    //y is 0.90, x is 0.70
+    //for model, y is 0.30, x is 0.35
 
     private double offset0 = 0; // For making software adjustment to servo
     private double offset1 = 0;
@@ -45,9 +52,9 @@ public class Arm extends SubsystemBase {
     private final NetworkTableEntry D_elbowServo = tab.add("elbowServo", 0).withPosition(3,0).getEntry();
     private final NetworkTableEntry D_gripperServo = tab.add("gripperServo", 0).withPosition(4,0).getEntry();
 
-    private final NetworkTableEntry D_offset0 = tab.addPersistent("elbow offset", 0).withPosition(6,1).withWidget(BuiltInWidgets.kNumberSlider)
+    private final NetworkTableEntry D_offset0 = tab.addPersistent("shoulder offset", 0).withPosition(6,1).withWidget(BuiltInWidgets.kNumberSlider)
             .withProperties(Map.of("min", -200, "max", 200)).getEntry();
-    private final NetworkTableEntry D_offset1 = tab.addPersistent("shoulder offset", 0).withPosition(8,1).withWidget(BuiltInWidgets.kNumberSlider)
+    private final NetworkTableEntry D_offset1 = tab.addPersistent("elbow offset", 0).withPosition(8,1).withWidget(BuiltInWidgets.kNumberSlider)
             .withProperties(Map.of("min", -200, "max", 200)).getEntry();
 
     private final NetworkTableEntry D_posX = tab.add("Target posX", 0).withPosition(0,0).getEntry();
@@ -69,9 +76,9 @@ public class Arm extends SubsystemBase {
        
 
     public Arm() {
-        shoulderServo = new Servo(0); // shoulder
+        shoulderServo = new ServoSpecial(0); // shoulder
         //shoulderServo.setPeriodMultiplier(PeriodMultiplier.k1X); // this is to change the frequency of the bottom servo to 5ms instead of standard 20ms
-        elbowServo = new Servo(1); // elbow
+        elbowServo = new ServoSpecial(1); // elbow
 
         gripperServo = new Servo(2); // gripper 
         cameraServo = new Servo(3); // camera
@@ -93,7 +100,8 @@ public class Arm extends SubsystemBase {
      * @param degrees degree to set the servo to, range 0° - 300°
      */
     public void setShoulderAngle(final double degrees) {
-        shoulderServo.setAngle(degrees);
+        // System.out.println("shoulder angle being set:" + degrees );
+        shoulderServo.setAngle(300-degrees);
     }
 
     /**
@@ -103,7 +111,8 @@ public class Arm extends SubsystemBase {
      * @param degrees degree to set the servo to, range 0° - 300°
      */
     public void setElbowAngle(final double degrees) {
-        elbowServo.setAngle(degrees);
+        // System.out.println("elbow angle being set:" + degrees );
+        elbowServo.setAngle(300-degrees);
     }
 
     /**
@@ -280,7 +289,7 @@ public class Arm extends SubsystemBase {
         // shoulderServo and elbowServo might be mounted clockwise or anti clockwise.
         // offset0 and offset1 are used to adjust the zero the arm position.
         // This makes it easier to mount and tune the arm.
-        A = Math.toDegrees(A) * shoulderRatio * (180.0/150);
+        A = Math.toDegrees(A) * shoulderRatio;
         B = Math.toDegrees(B) * elbowRatio;
         
         D_angleA.setDouble(A/shoulderRatio);
@@ -290,7 +299,7 @@ public class Arm extends SubsystemBase {
         System.out.println("B wrt horizon:" + B/elbowRatio);
 
         // Uncomment if servo direction needs to be flip.
-        A = 300 - A;
+        //A = 300 - A;
 
         //Servo B is flipped?
         B = 300 - B;
