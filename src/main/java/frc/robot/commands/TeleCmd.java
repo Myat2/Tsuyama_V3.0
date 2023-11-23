@@ -22,17 +22,10 @@ public class TeleCmd extends CommandBase
 
     double Dpad = -1.0;
 
-    Double joyXpos = 0.90;
-    Double joyYpos = 0.70; //to have an intermediate variable for joystick control
-   
-    // Double joyXpos = 0.30;
-    // Double joyYpos = 0.30;  
-    
+    Double joyXpos = 0.885;
+    Double joyYpos = 0.9; //to have an intermediate variable for joystick control
+
     Translation2d pos;
-
-    //for model, y is 0.30, x is 0.35
-
-    //y is 0.61, x is 0.90
 
     /**
      * Constructor
@@ -70,10 +63,8 @@ public class TeleCmd extends CommandBase
         boolean btnflag = false;
         boolean joystickflag = false;
      
-
         double x = m_oi.getRightDriveX();
         double y = -m_oi.getRightDriveY(); // Down is positive. Need to negate
-
         double w = -m_oi.getLeftDriveX(); // X-positive is CW. Need to negate
 
         m_omnidrive.setRobotSpeedXYW_Open(x, y, w);
@@ -91,64 +82,51 @@ public class TeleCmd extends CommandBase
         boolean btnA = m_oi.getDriveAButton();
         boolean btnB = m_oi.getDriveBButton();
 
-        // Handle button B press to move the arm to (0.3, 0.3)
-        // uncomment and change it to the preset coordinates
         if (btnY) {
 
-            joyXpos = 0.485;
-            joyYpos = 0.60;
+            joyXpos = 1.48;
+            joyYpos = 0.755;
 
             btnflag = true;
         }
         else if (btnX){
 
-            joyXpos = 0.775;
-            joyYpos = 1.02;
+            joyXpos = 0.995;
+            joyYpos = 0.57;
 
             btnflag = true;
 
         }
         else if (btnA){
 
-            joyXpos = 1.33;
-            joyYpos = 0.70;
+            joyXpos = 0.435;
+            joyYpos = 0.35;
 
             btnflag = true;
         }
         else if (btnB){
 
-            // joyXpos = 0.82;
-            // joyYpos = 0.89;
+            joyXpos = 0.585;
+            joyYpos = 0.585;
 
             btnflag = true;
         }
         else if (RightTrig > 0.1){
             joyYpos = joyYpos + 0.005;
-
-            joystickflag = true;
         }
         else if (LeftTrig > 0.1){
             joyYpos = joyYpos - 0.005;
-
-            joystickflag = true;
         }
         else if (Dpad == 0.0) {
-            // joyXpos = joyXpos + 0.005;
-            joyXpos = joyXpos - 0.005;
-
-            joystickflag = true;
+            joyXpos = joyXpos + 0.005;
         }
         else if (Dpad == 180.0) {
-            // joyXpos = joyXpos - 0.005;
-            joyXpos = joyXpos + 0.005;
-
-            joystickflag = true;
+            joyXpos = joyXpos - 0.005;
         }
 
-        //the whole above section coding is wrong, the y axis should change if the x axis moves
-        //also code a hard limit using pythagoras theorm on how physically possible it is to move the arm
 
         pos = new Translation2d(joyXpos,joyYpos);
+
         System.out.println("Dpad" + Dpad);
         System.out.println("JoyXpos:" + joyXpos);
         System.out.println("JoyYpos:" + joyYpos);
@@ -156,19 +134,19 @@ public class TeleCmd extends CommandBase
         //use tail -f /var/local/kauailabs/log/FRC_UserProgram.log 
         //command in vnc CMD to view the printouts
         //new MoveArm(pos, 12.0).schedule();
+        // m_arm.setArmPos(pos);
 
-        if (joystickflag == true){
-            m_arm.setArmPos(pos);   
-        }
-        else if(btnflag == true)
+       
+        if (btnflag == true)
         {
             new MoveArm(pos,1.0).schedule();
-            new WaitCommand(2.0);
+            new WaitCommand(10.0);
+        }
+        else
+         {
+            m_arm.setArmPos(pos);   
         }
 
-
-        // Unrelated to arm control, leave it as is
-        // m_arm.setCameraAngle(m_arm.getSliderCamera());
         m_arm.setGripper(m_arm.getSliderGripper());
 
 

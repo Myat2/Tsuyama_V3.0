@@ -4,6 +4,7 @@ import edu.wpi.first.wpilibj.geometry.Translation2d;
 import edu.wpi.first.wpilibj.trajectory.TrapezoidProfile;
 //WPI imports
 import edu.wpi.first.wpilibj2.command.CommandBase;
+import edu.wpi.first.wpilibj2.command.WaitCommand;
 //RobotContainer import
 import frc.robot.RobotContainer;
 //Subsystem imports
@@ -68,6 +69,9 @@ public class MoveArm extends CommandBase{
 
         m_setpoint1 = m_profile1.calculate(dT);
         cur_pos = start_pos.plus(new Translation2d((m_setpoint1.position*m_dx/tgt_dist),(m_setpoint1.position*m_dy/tgt_dist)));
+
+        System.out.println("cur_pos:" + cur_pos);
+        new WaitCommand(1);
 
         m_arm.setArmPos(cur_pos);
         

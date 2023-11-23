@@ -18,33 +18,23 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 //testing commit
 
 public class Arm extends SubsystemBase {
-    private final Servo gripperServo, cameraServo, trolleyServo;
-    private final ServoSpecial shoulderServo, elbowServo;
+    private final Servo gripperServo, cameraServo, trolleyServo, elbowServo;
+    private final ServoSpecial shoulderServo;
 
     private Translation2d m_pos; // current arm tip target position
     private Translation2d m_posreal;// actual current arm tip position
 
-    private final double a2 = 0.90;  //upper arm (x)
-    private final double a1 = 0.70 ;  //lower arm (y)
+    private final double a2 = 0.885;  //upper arm (x)
+    private final double a1 = 0.9 ;  //lower arm (y)
     
-
-    // private final double a1 = 0.30 ;  //lower arm (y)
-    // private final double a2 = 0.30;  //upper arm (x)
-
-    //y is 0.90, x is 0.70
-    //for model, y is 0.30, x is 0.35
-
     private double offset0 = 0; // For making software adjustment to servo
     private double offset1 = 0;
 
     private double m_x, m_y;     //intermediate variable to check if arm is tryign to reach an impossible coordinate
 
-
-    private double shoulderRatio = 2.0;
+    private double shoulderRatio = 4.0;
     private double elbowRatio = 2.0;
 
-    
-    // Good for debugging
     // Shuffleboard
     private final ShuffleboardTab tab = Shuffleboard.getTab("Arm");
 
@@ -77,8 +67,7 @@ public class Arm extends SubsystemBase {
 
     public Arm() {
         shoulderServo = new ServoSpecial(0); // shoulder
-        //shoulderServo.setPeriodMultiplier(PeriodMultiplier.k1X); // this is to change the frequency of the bottom servo to 5ms instead of standard 20ms
-        elbowServo = new ServoSpecial(1); // elbow
+        elbowServo = new Servo(1); // elbow
 
         gripperServo = new Servo(2); // gripper 
         cameraServo = new Servo(3); // camera
@@ -101,7 +90,7 @@ public class Arm extends SubsystemBase {
      */
     public void setShoulderAngle(final double degrees) {
         // System.out.println("shoulder angle being set:" + degrees );
-        shoulderServo.setAngle(300-degrees);
+        shoulderServo.setAngle(degrees);
     }
 
     /**
@@ -112,7 +101,7 @@ public class Arm extends SubsystemBase {
      */
     public void setElbowAngle(final double degrees) {
         // System.out.println("elbow angle being set:" + degrees );
-        elbowServo.setAngle(300-degrees);
+        elbowServo.setAngle(degrees);
     }
 
     /**
@@ -270,8 +259,8 @@ public class Arm extends SubsystemBase {
         D_posXreal.setDouble(m_x);
         D_posYreal.setDouble(m_y);
 
-        double a = a2;
-        double c = a1;
+        double a = a2; //a2=x or 0.885m
+        double c = a1; //a1=y or 0.9m
         double b = Math.sqrt(x * x + y * y);
 
         System.out.println("Actual distance between arm tip and 0.0: " + b);
@@ -291,6 +280,9 @@ public class Arm extends SubsystemBase {
         // This makes it easier to mount and tune the arm.
         A = Math.toDegrees(A) * shoulderRatio;
         B = Math.toDegrees(B) * elbowRatio;
+
+        System.out.println("A:" + A);
+        System.out.println("B:" + B);
         
         D_angleA.setDouble(A/shoulderRatio);
         D_angleB.setDouble(B/elbowRatio);
@@ -298,16 +290,22 @@ public class Arm extends SubsystemBase {
         System.out.println("A wrt horizon:" + A/shoulderRatio);
         System.out.println("B wrt horizon:" + B/elbowRatio);
 
-        // Uncomment if servo direction needs to be flip.
-        //A = 300 - A;
+        A = A - 180; // to account for the offset, e.g. limited angle range due to 1:4
 
-        //Servo B is flipped?
+        // Uncomment if servo direction needs to be flip.
+        // A = 360 - A;
+
+        //Servo B is flipped
         B = 300 - B;
 
-        shoulderServo.setAngle(A + offset0); // shoulderServo is -15 * shoulderRatio
-        elbowServo.setAngle(B + offset1); // elbowServo is -15 degrees * elbowARatio
+        System.out.println("B after minus:" + B);
 
-        System.out.println("A angle being set:" + (A+offset0) );
+        System.out.println("offset1:" + offset1);
+
+        shoulderServo.setAngle(360  - (A + offset0)); 
+        elbowServo.setAngle(B + offset1); 
+
+        System.out.println("A angle being set:" + (360-(A+offset0)) );
         System.out.println("B angle being set:" + (B+offset1) );
         System.out.println("--------");
         System.out.println("--------");
@@ -332,10 +330,10 @@ public class Arm extends SubsystemBase {
      */
     @Override
     public void periodic() {
-        offset0 = D_offset0.getDouble(120);
-        offset1 = D_offset1.getDouble(-60);
-        // Globals.PerspTfCamAngle = (int)D_PerspViewingAngle.getDouble(300); // Added
-        // Globals.PickingCameraAngle = (int)D_PickingCameraAngle.getDouble(300); // Added
+        offset0 =  D_offset0.getDouble(120);
+        offset1 =  D_offset1.getDouble(-60);
+
+
 
         D_shoulderServo.setDouble(shoulderServo.getAngle());
         D_elbowServo.setDouble(elbowServo.getAngle());
