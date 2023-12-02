@@ -70,6 +70,9 @@ public class Arm extends SubsystemBase {
         elbowServo = new Servo(1); // elbow
 
         gripperServo = new Servo(2); // gripper 
+
+
+        
         cameraServo = new Servo(3); // camera
         trolleyServo = new Servo(4); // trolley holder
 

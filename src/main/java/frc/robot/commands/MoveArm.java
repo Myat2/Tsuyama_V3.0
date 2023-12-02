@@ -70,9 +70,6 @@ public class MoveArm extends CommandBase{
         m_setpoint1 = m_profile1.calculate(dT);
         cur_pos = start_pos.plus(new Translation2d((m_setpoint1.position*m_dx/tgt_dist),(m_setpoint1.position*m_dy/tgt_dist)));
 
-        System.out.println("cur_pos:" + cur_pos);
-        new WaitCommand(1);
-
         m_arm.setArmPos(cur_pos);
         
         if (m_profile1.isFinished(dT) || endCondition()) {

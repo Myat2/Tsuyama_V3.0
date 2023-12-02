@@ -61,11 +61,10 @@ public class TeleCmd extends CommandBase
         // Left stick for W (rotational) control
 
         boolean btnflag = false;
-        boolean joystickflag = false;
      
-        double x = m_oi.getRightDriveX();
-        double y = -m_oi.getRightDriveY(); // Down is positive. Need to negate
-        double w = -m_oi.getLeftDriveX(); // X-positive is CW. Need to negate
+        double x = (m_oi.getRightDriveX() * 0.75) ;
+        double y = (-m_oi.getRightDriveY() * 0.75) ; // Down is positive. Need to negate
+        double w = (-m_oi.getLeftDriveX() * 0.75) ; // X-positive is CW. Need to negate
 
         m_omnidrive.setRobotSpeedXYW_Open(x, y, w);
 
@@ -82,25 +81,37 @@ public class TeleCmd extends CommandBase
         boolean btnA = m_oi.getDriveAButton();
         boolean btnB = m_oi.getDriveBButton();
 
+        boolean leftBumper = m_oi.getDriveLeftBumper();
+        boolean rightBumper = m_oi.getDriveRightBumper();
+
+        if(leftBumper)
+        {
+            m_arm.setGripper(210);
+        }
+        else if (rightBumper)
+        {
+            m_arm.setGripper(150);
+        }
+
         if (btnY) {
 
-            joyXpos = 1.48;
-            joyYpos = 0.755;
+            joyXpos = 1.32;
+            joyYpos = 1.005;
 
             btnflag = true;
         }
         else if (btnX){
 
-            joyXpos = 0.995;
-            joyYpos = 0.57;
+            joyXpos = 0.810;
+            joyYpos = 0.745;
 
             btnflag = true;
 
         }
         else if (btnA){
 
-            joyXpos = 0.435;
-            joyYpos = 0.35;
+            joyXpos = 0.415;
+            joyYpos = 0.560;
 
             btnflag = true;
         }
@@ -139,15 +150,15 @@ public class TeleCmd extends CommandBase
        
         if (btnflag == true)
         {
-            new MoveArm(pos,1.0).schedule();
-            new WaitCommand(10.0);
+            new MoveArm(pos,1.0).schedule(); // change the voltage/speed values to see what works best
+            new WaitCommand(10.0);   //delay so that movearm can finish, see if needed or if replace w flag
         }
         else
          {
             m_arm.setArmPos(pos);   
         }
 
-        m_arm.setGripper(m_arm.getSliderGripper());
+        // m_arm.setGripper(m_arm.getSliderGripper());
 
 
     }
