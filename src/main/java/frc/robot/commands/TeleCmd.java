@@ -24,6 +24,11 @@ public class TeleCmd extends CommandBase
 
     Double joyXpos = 0.885;
     Double joyYpos = 0.9; //to have an intermediate variable for joystick control
+    boolean gripperflag=false;
+
+    private long lastRightBumperPressTime = 0;
+    private static final long DEBOUNCE_DELAY = 500; // Set the debounce delay in milliseconds
+
 
     Translation2d pos;
 
@@ -45,7 +50,7 @@ public class TeleCmd extends CommandBase
     @Override
     public void initialize()
     {
-        Dpad = -1.0;
+        Dpad = -1.0;        
     }
 
     /**
@@ -62,9 +67,9 @@ public class TeleCmd extends CommandBase
 
         boolean btnflag = false;
      
-        double x = (m_oi.getRightDriveX() * 0.75) ;
-        double y = (-m_oi.getRightDriveY() * 0.75) ; // Down is positive. Need to negate
-        double w = (-m_oi.getLeftDriveX() * 0.75) ; // X-positive is CW. Need to negate
+        double x = (m_oi.getLeftDriveX() * 0.90) ;
+        double y = (-m_oi.getLeftDriveY() * 0.90) ; // Down is positive. Need to negate
+        double w = (-m_oi.getRightDriveX() * 0.90) ; // X-positive is CW. Need to negate
 
         m_omnidrive.setRobotSpeedXYW_Open(x, y, w);
 
@@ -81,17 +86,24 @@ public class TeleCmd extends CommandBase
         boolean btnA = m_oi.getDriveAButton();
         boolean btnB = m_oi.getDriveBButton();
 
-        boolean leftBumper = m_oi.getDriveLeftBumper();
         boolean rightBumper = m_oi.getDriveRightBumper();
 
-        if(leftBumper)
-        {
-            m_arm.setGripper(210);
+
+        if (rightBumper && System.currentTimeMillis() - lastRightBumperPressTime >= DEBOUNCE_DELAY) {
+            // Update the last press time
+            lastRightBumperPressTime = System.currentTimeMillis();
+    
+            if (!gripperflag) {
+                m_arm.setGripper(210); // open
+            } else {
+                m_arm.setGripper(150); // close
+            }
+    
+            // Toggle the gripperflag
+            gripperflag = !gripperflag;
         }
-        else if (rightBumper)
-        {
-            m_arm.setGripper(150);
-        }
+
+    
 
         if (btnY) {
 
@@ -106,7 +118,6 @@ public class TeleCmd extends CommandBase
             joyYpos = 0.745;
 
             btnflag = true;
-
         }
         else if (btnA){
 

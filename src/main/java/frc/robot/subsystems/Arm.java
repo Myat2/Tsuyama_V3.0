@@ -18,8 +18,8 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 //testing commit
 
 public class Arm extends SubsystemBase {
-    private final Servo gripperServo, cameraServo, trolleyServo, elbowServo;
-    private final ServoSpecial shoulderServo;
+    private final Servo gripperServo, cameraServo, trolleyServo;
+    private final ServoSpecial shoulderServo, elbowServo;
 
     private Translation2d m_pos; // current arm tip target position
     private Translation2d m_posreal;// actual current arm tip position
@@ -67,7 +67,7 @@ public class Arm extends SubsystemBase {
 
     public Arm() {
         shoulderServo = new ServoSpecial(0); // shoulder
-        elbowServo = new Servo(1); // elbow
+        elbowServo = new ServoSpecial(1); // elbow
 
         gripperServo = new Servo(2); // gripper 
 
@@ -306,10 +306,10 @@ public class Arm extends SubsystemBase {
         System.out.println("offset1:" + offset1);
 
         shoulderServo.setAngle(360  - (A + offset0)); 
-        elbowServo.setAngle(B + offset1); 
+        elbowServo.setAngle(360 - (B + offset1)); 
 
         System.out.println("A angle being set:" + (360-(A+offset0)) );
-        System.out.println("B angle being set:" + (B+offset1) );
+        System.out.println("B angle being set:" + (360-(B+offset1)) );
         System.out.println("--------");
         System.out.println("--------");
 
