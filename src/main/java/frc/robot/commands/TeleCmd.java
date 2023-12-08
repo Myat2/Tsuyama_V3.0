@@ -66,19 +66,25 @@ public class TeleCmd extends CommandBase
         // Left stick for W (rotational) control
 
         boolean btnflag = false;
+
+        Dpad  = m_oi.getDpad();  //Dpad angle
      
-        double x = (m_oi.getLeftDriveX() * 0.90) ;
-        double y = (-m_oi.getLeftDriveY() * 0.90) ; // Down is positive. Need to negate
-        double w = (-m_oi.getRightDriveX() * 0.90) ; // X-positive is CW. Need to negate
+        double x = m_oi.getLeftDriveX();
+        double y = -m_oi.getLeftDriveY(); // Down is positive. Need to negate
+        double w = -m_oi.getRightDriveX(); // X-positive is CW. Need to negate
+
+        if (Dpad == 90.0) {
+            x = 0.8; // Move left
+        } else if (Dpad == 270.0) {
+            x = -0.8; // Move right
+        }
 
         m_omnidrive.setRobotSpeedXYW_Open(x, y, w);
 
         //arm up and down (y axis)
         double RightTrig = m_oi.getDriveRightTrigger();
         double LeftTrig = m_oi.getDriveLeftTrigger();
-
-        //Dpad angle
-        Dpad  = m_oi.getDpad();
+        
 
         //arm preset positions
         boolean btnY = m_oi.getDriveYButton();
@@ -107,15 +113,15 @@ public class TeleCmd extends CommandBase
 
         if (btnY) {
 
-            joyXpos = 1.32;
-            joyYpos = 1.005;
+            joyXpos = 1.27;
+            joyYpos = 0.91;
 
             btnflag = true;
         }
         else if (btnX){
 
-            joyXpos = 0.810;
-            joyYpos = 0.745;
+            joyXpos = 0.79;
+            joyYpos = 0.725;
 
             btnflag = true;
         }
@@ -128,8 +134,8 @@ public class TeleCmd extends CommandBase
         }
         else if (btnB){
 
-            joyXpos = 0.585;
-            joyYpos = 0.585;
+            joyXpos = 0.515;
+            joyYpos = 0.505;
 
             btnflag = true;
         }
