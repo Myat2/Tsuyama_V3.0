@@ -74,9 +74,9 @@ public class TeleCmd extends CommandBase
         double w = -m_oi.getRightDriveX(); // X-positive is CW. Need to negate
 
         if (Dpad == 90.0) {
-            x = 0.8; // Move left
+            x = 0.5; // Move left
         } else if (Dpad == 270.0) {
-            x = -0.8; // Move right
+            x = -0.5; // Move right
         }
 
         m_omnidrive.setRobotSpeedXYW_Open(x, y, w);
@@ -121,7 +121,7 @@ public class TeleCmd extends CommandBase
         else if (btnX){
 
             joyXpos = 0.79;
-            joyYpos = 0.725;
+            joyYpos = 0.66;
 
             btnflag = true;
         }
