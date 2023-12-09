@@ -24,9 +24,18 @@ public class TeleCmd extends CommandBase
 
     Double joyXpos = 0.885;
     Double joyYpos = 0.9; //to have an intermediate variable for joystick control
+
     boolean gripperflag=false;
+    boolean foldflag = false;
+
+    boolean modelock = false;
+
+    Double shoulder_angle;
+    Double elbow_angle;
+    
 
     private long lastRightBumperPressTime = 0;
+    private long lastLeftBumperPressTime = 0 ;
     private static final long DEBOUNCE_DELAY = 500; // Set the debounce delay in milliseconds
 
 
@@ -66,6 +75,8 @@ public class TeleCmd extends CommandBase
         // Left stick for W (rotational) control
 
         boolean btnflag = false;
+        boolean setangleflag = false;
+        
 
         Dpad  = m_oi.getDpad();  //Dpad angle
      
@@ -93,6 +104,7 @@ public class TeleCmd extends CommandBase
         boolean btnB = m_oi.getDriveBButton();
 
         boolean rightBumper = m_oi.getDriveRightBumper();
+        boolean leftBumper = m_oi.getDriveLeftBumper();
 
 
         if (rightBumper && System.currentTimeMillis() - lastRightBumperPressTime >= DEBOUNCE_DELAY) {
@@ -113,31 +125,49 @@ public class TeleCmd extends CommandBase
 
         if (btnY) {
 
-            joyXpos = 1.27;
-            joyYpos = 0.91;
+            joyXpos = 1.385;
+            joyYpos = 0.735;
 
             btnflag = true;
         }
         else if (btnX){
 
-            joyXpos = 0.79;
-            joyYpos = 0.66;
+            joyXpos = 0.88;
+            joyYpos = 0.555;
 
             btnflag = true;
         }
         else if (btnA){
 
-            joyXpos = 0.415;
-            joyYpos = 0.560;
+            joyXpos = 0.720;
+            joyYpos = 0.495;
 
             btnflag = true;
         }
         else if (btnB){
 
-            joyXpos = 0.515;
-            joyYpos = 0.505;
+            joyXpos = 0.720;
+            joyYpos = 0.495;
 
             btnflag = true;
+        }
+        else if (leftBumper && System.currentTimeMillis() - lastLeftBumperPressTime >= DEBOUNCE_DELAY) {
+            // Update the last press time
+            lastLeftBumperPressTime = System.currentTimeMillis();
+    
+            if (!foldflag) {
+               shoulder_angle = 130.68;
+               elbow_angle = 360.0;
+               setangleflag = true;
+               modelock = true;
+            } else {
+                joyXpos = 0.23;
+                joyYpos = 0.06;
+                setangleflag = false;
+                modelock = false;
+            }
+
+            foldflag = !foldflag;
         }
         else if (RightTrig > 0.1){
             joyYpos = joyYpos + 0.005;
@@ -158,6 +188,7 @@ public class TeleCmd extends CommandBase
         System.out.println("Dpad" + Dpad);
         System.out.println("JoyXpos:" + joyXpos);
         System.out.println("JoyYpos:" + joyYpos);
+        System.out.println("Modelock" + modelock);
 
         //use tail -f /var/local/kauailabs/log/FRC_UserProgram.log 
         //command in vnc CMD to view the printouts
@@ -168,13 +199,18 @@ public class TeleCmd extends CommandBase
         if (btnflag == true)
         {
             new MoveArm(pos,1.0).schedule(); // change the voltage/speed values to see what works best
-            new WaitCommand(10.0);   //delay so that movearm can finish, see if needed or if replace w flag
         }
-        else
-         {
+        else if(setangleflag == true)
+        {
+            m_arm.setShoulderAngle(shoulder_angle);
+            m_arm.setElbowAngle(elbow_angle);
+        }
+        else if (modelock == false)
+        {
             m_arm.setArmPos(pos);   
         }
 
+        System.out.println("btnflag:"+ btnflag);
         // m_arm.setGripper(m_arm.getSliderGripper());
 
 

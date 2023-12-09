@@ -23,6 +23,7 @@ public class MoveArm extends CommandBase{
     private Translation2d cur_pos;
     private Translation2d start_pos;
     private double tgt_dist, m_dx, m_dy;
+	public Object schedule;
 
     /** This command is used to control an arm with 2 degrees of freedom
      * 
@@ -64,7 +65,14 @@ public class MoveArm extends CommandBase{
     @Override
     public void execute()
     {
-         
+        System.out.println("------------------");
+        System.out.println("------------------");
+        System.out.println("------------------");
+        System.out.println("------------------");
+        System.out.println("------------------");
+        System.out.println("------------------");
+        System.out.println("------------------");
+        System.out.println("------------------");
         m_profile1 = new TrapezoidProfile(m_constraints, m_goal1, m_setpoint1);
 
         m_setpoint1 = m_profile1.calculate(dT);
