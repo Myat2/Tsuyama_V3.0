@@ -35,7 +35,7 @@ public class TeleCmd extends CommandBase
     
 
     private long lastRightBumperPressTime = 0;
-    private long lastLeftBumperPressTime = 0 ;
+    private long lastbackbtn = 0 ;
     private static final long DEBOUNCE_DELAY = 500; // Set the debounce delay in milliseconds
 
 
@@ -85,9 +85,9 @@ public class TeleCmd extends CommandBase
         double w = -m_oi.getRightDriveX(); // X-positive is CW. Need to negate
 
         if (Dpad == 90.0) {
-            x = 0.5; // Move left
+            x = 0.1; // Move left
         } else if (Dpad == 270.0) {
-            x = -0.5; // Move right
+            x = -0.1; // Move right
         }
 
         m_omnidrive.setRobotSpeedXYW_Open(x, y, w);
@@ -104,7 +104,7 @@ public class TeleCmd extends CommandBase
         boolean btnB = m_oi.getDriveBButton();
 
         boolean rightBumper = m_oi.getDriveRightBumper();
-        boolean leftBumper = m_oi.getDriveLeftBumper();
+        boolean backbtn = m_oi.getDriveBackButton();
 
 
         if (rightBumper && System.currentTimeMillis() - lastRightBumperPressTime >= DEBOUNCE_DELAY) {
@@ -126,34 +126,34 @@ public class TeleCmd extends CommandBase
         if (btnY) {
 
             joyXpos = 1.385;
-            joyYpos = 0.735;
+            joyYpos = 0.700;
 
             btnflag = true;
         }
         else if (btnX){
 
             joyXpos = 0.88;
-            joyYpos = 0.555;
+            joyYpos = 0.53;
 
             btnflag = true;
         }
         else if (btnA){
 
             joyXpos = 0.720;
-            joyYpos = 0.495;
+            joyYpos = 0.425;
 
             btnflag = true;
         }
         else if (btnB){
 
             joyXpos = 0.720;
-            joyYpos = 0.495;
+            joyYpos = 0.425;
 
             btnflag = true;
         }
-        else if (leftBumper && System.currentTimeMillis() - lastLeftBumperPressTime >= DEBOUNCE_DELAY) {
+        else if (backbtn && System.currentTimeMillis() - lastbackbtn >= DEBOUNCE_DELAY) {
             // Update the last press time
-            lastLeftBumperPressTime = System.currentTimeMillis();
+            lastbackbtn = System.currentTimeMillis();
     
             if (!foldflag) {
                shoulder_angle = 130.68;
@@ -161,8 +161,9 @@ public class TeleCmd extends CommandBase
                setangleflag = true;
                modelock = true;
             } else {
-                joyXpos = 0.23;
-                joyYpos = 0.06;
+                joyXpos = 0.720;
+                joyYpos = 0.425;
+                btnflag = true;
                 setangleflag = false;
                 modelock = false;
             }
